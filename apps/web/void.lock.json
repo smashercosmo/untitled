@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "source": {
+    "name": "movies-web",
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_name": "movies",
+        "database_id": "f35b7e71-fda6-4a4c-9b3a-52dc23d72ed1",
+        "migrations_dir": "db/migrations",
+        "migrations_table": "_void_migrations"
+      }
+    ]
+  },
+  "resolved": {
+    "name": "movies-web",
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_name": "movies",
+        "database_id": "f35b7e71-fda6-4a4c-9b3a-52dc23d72ed1",
+        "migrations_dir": "db/migrations",
+        "migrations_table": "_void_migrations"
+      }
+    ],
+    "account_id": "fd8abb954e953f9750396aff6de9a4bc"
+  },
+  "text": "{\n  \"name\": \"movies-web\",\n  \"d1_databases\": [\n    {\n      \"binding\": \"DB\",\n      \"database_name\": \"movies\",\n      \"database_id\": \"f35b7e71-fda6-4a4c-9b3a-52dc23d72ed1\",\n      \"migrations_dir\": \"db/migrations\",\n      \"migrations_table\": \"_void_migrations\"\n    }\n  ],\n  \"account_id\": \"fd8abb954e953f9750396aff6de9a4bc\"\n}\n"
+}

@@ -1,0 +1,30 @@
+{
+  "name": "@movies/sync",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./store": "./src/store.ts",
+    "./messages": "./src/messages.ts"
+  },
+  "scripts": {
+    "dev": "wrangler dev --persist-to .wrangler/state",
+    "deploy": "wrangler deploy",
+    "types": "wrangler types",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local --persist-to .wrangler/state",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "bootstrap:local": "wrangler workflows trigger tmdb-sync '{\"mode\":\"bootstrap\",\"limit\":2000,\"drainIntervalSeconds\":30}' --local",
+    "daily:local": "wrangler workflows trigger tmdb-sync '{\"mode\":\"daily\",\"limit\":2000,\"drainIntervalSeconds\":30}' --local"
+  },
+  "dependencies": {
+    "@movies/tmdb": "workspace:*"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.7.0",
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0",
+    "wrangler": "^4.160.0"
+  }
+}

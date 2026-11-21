@@ -1,0 +1,21 @@
+{
+  "name": "@movies/scripts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed": "tsx seed.ts",
+    "fixtures:refresh": "tsx fixtures-refresh.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@movies/sync": "workspace:*",
+    "@movies/tmdb": "workspace:*",
+    "jsonc-parser": "^3.3.1",
+    "wrangler": "^4.160.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,17 @@
+# secrets
+.dev.vars
+.dev.vars.*
+.env
+.env.*
+
+# deps & local state
+node_modules/
+.wrangler/
+wrangler.seed-remote.jsonc
+
+# real TMDB samples (TMDB terms: never commit/keep cached content > 6 months)
+fixtures/real/
+
+# misc
+*.log
+.DS_Store

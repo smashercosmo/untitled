@@ -1,0 +1,1 @@
+CREATE INDEX `tmdb_movies_state_votes_idx` ON `tmdb_movies` (`state`,`vote_count`);

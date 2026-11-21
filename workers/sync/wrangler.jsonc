@@ -1,0 +1,77 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // TMDB → R2 → D1 sync. See docs/SPEC.md. This config must never live at the repo root (Void would adopt it).
+  "name": "movies-sync",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-11",
+
+  // No public surface (SPEC § 7): no workers.dev URL, no preview URLs, no routes, no fetch handler.
+  "workers_dev": false,
+  "preview_urls": false,
+
+  "observability": {
+    "enabled": true,
+    "logs": { "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.05 }
+  },
+
+  // Fuses (SPEC § 7.3).
+  "limits": { "cpu_ms": 60000, "subrequests": 20000 },
+
+  // IDs are filled in when the cloud resources are created (docs/RUNBOOK.md § Cloud setup).
+  // Local dev needs no IDs (Wrangler provisions local resources).
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "movies",
+      // Cloud D1 (weur, created 2026-11-11). Also the local identity shared with apps/web:
+      // same database_id + same persist dir ⇒ the same local SQLite file for wrangler dev and Void's dev server.
+      "database_id": "f35b7e71-fda6-4a4c-9b3a-52dc23d72ed1",
+      "migrations_dir": "../../packages/tmdb/migrations",
+      "migrations_table": "tmdb_migrations"
+    }
+  ],
+  "r2_buckets": [{ "binding": "RAW", "bucket_name": "movies-tmdb-raw" }],
+
+  "queues": {
+    "producers": [{ "binding": "FETCH_QUEUE", "queue": "tmdb-fetch" }],
+    "consumers": [
+      {
+        // max_concurrency 1 ⇒ this consumer is the global TMDB rate limiter (Q18).
+        "queue": "tmdb-fetch",
+        "max_batch_size": 50,
+        "max_batch_timeout": 5,
+        "max_retries": 5,
+        "max_concurrency": 1,
+        "retry_delay": 60,
+        "dead_letter_queue": "tmdb-fetch-dlq"
+      },
+      {
+        "queue": "tmdb-fetch-dlq",
+        "max_batch_size": 100,
+        "max_batch_timeout": 30,
+        "max_retries": 3,
+        "max_concurrency": 1
+      }
+    ]
+  },
+
+  "workflows": [
+    {
+      "name": "tmdb-sync",
+      "binding": "SYNC_WORKFLOW",
+      "class_name": "SyncWorkflow",
+      "schedules": ["0 9 * * *"],
+      "limits": { "steps": 2000 }
+    }
+  ],
+
+  "vars": {
+    "TMDB_RPS": "20",
+    "DISCOVER_RPS": "10",
+    "GUARD_MAX_TMDB_REQUESTS": "50000",
+    "GUARD_MAX_R2_WRITES": "50000",
+    "GUARD_MAX_D1_ROWS": "1000000"
+  }
+  // Secrets (wrangler secret put / .dev.vars): TMDB_READ_ACCESS_TOKEN, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+}
